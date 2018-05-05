@@ -2,6 +2,7 @@
 
 #define A GPIO_ODR_ODR_12 
 
+uint8_t data;
 int main(void){
 	#if 1
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;//habilita o clock da porta A
@@ -9,7 +10,9 @@ int main(void){
 	
 	
 	GPIOD->ODR &= ~A;
-	
+	//GPIO ADC CFG
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;//habilita o clock da porta A
+	GPIOA->MODER =  3 << GPIO_MODER_MODER6_Pos; //ANALOG FUNC
 	//confg pin timmer 
 	/*RCC -> AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
 	GPIOB -> MODER |= GPIO_MODER_MODER3_1;//MODO AF
@@ -17,22 +20,30 @@ int main(void){
 	GPIOB->OSPEEDR |= 3 << GPIO_OSPEEDR_OSPEED3_Pos;*/
 	
 	
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	/*RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	
 	TIM2->PSC = 1600 - 1;//VALOR PELO QUAL O CLOCK INICIAL É DIVIDIDO
 	TIM2->ARR = 10 - 1;
-	TIM2->CR1 |= TIM_CR1_CEN;
+	TIM2->CR1 |= TIM_CR1_CEN|
+							 TIM_CR1_ARPE;*/
 	
 	//ADC CFG
 	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
-	ADC1->CR2 |= ADC_CR2_ADON; //ENABLE ADC;
-
+	ADC1->CR1 = 2 << ADC_CR1_RES_Pos;//ADC 8 BITS 
+	ADC1->SQR1 = 0 << ADC_SQR1_L_Pos;//N DE CONV
+	ADC1->SQR3 = 1 << ADC_SQR3_SQ6_Pos;//SEQ DO CANAL, JOGA NO REGISTRADOR RESPECTIVO O NUMERO DA SUA ORDEM DE LEITURA
+	ADC1->SMPR2 = 2 << ADC_SMPR2_SMP6_Pos;
+	
+	ADC1->CR2 |= ADC_CR2_ADON;
 	#endif
 	while(1)
 	{
 		#if 1
-		while(!(TIM2->SR & TIM_SR_UIF));
-		TIM2->SR &= ~(TIM_SR_UIF);
+		
+		ADC1->CR2 |= ADC_CR2_SWSTART;//COMECA A CONV
 		GPIOD->ODR ^= A;
+		while(!(ADC1->SR & ADC_SR_EOC));//ESPERA A CONVERSAO TERMINAR
+		data = ADC1-> DR;//ARMAZENA OS DADOS
 #endif
 	}
 }
