@@ -151,35 +151,15 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>data</ItemText>
+          <ItemText>i</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>data</ItemText>
+          <ItemText>count</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\ADC\ADC.c\data</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>data2</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>i</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>t</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
           <WinNumber>1</WinNumber>
           <ItemText>data</ItemText>
         </Ww>
@@ -232,11 +212,11 @@
           <WinId>35905</WinId>
         </Entry>
         <Entry>
-          <Name>System Viewer\GPIOB</Name>
-          <WinId>35904</WinId>
+          <Name>System Viewer\C_ADC</Name>
+          <WinId>35902</WinId>
         </Entry>
         <Entry>
-          <Name>System Viewer\GPIOD</Name>
+          <Name>System Viewer\GPIOA</Name>
           <WinId>35903</WinId>
         </Entry>
       </SystemViewers>

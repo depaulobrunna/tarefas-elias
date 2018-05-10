@@ -1,6 +1,7 @@
 #include "stm32f4xx.h"                  // Device header
 
-uint8_t i,u,t;
+uint8_t i,count,timeout = 100,data;
+uint32_t reset;
 
 int main(void)
 {
@@ -17,18 +18,21 @@ int main(void)
 	ADC2->SMPR2 = (ADC2->SMPR2 & ~ADC_SMPR2_SMP1)|(8 << ADC_SMPR2_SMP1_Pos);
 	ADC2->CR2 = (ADC2->CR2 & ~(ADC_CR2_CONT|ADC_CR2_ADON))|((0 << ADC_CR2_CONT_Pos)|(1 << ADC_CR2_ADON_Pos));
 	
+	
 	while(1)
 	{
-    #if 1		
+    #if 1	
+				ADC2->DR = 0x00;
         while(!(ADC2->SR & ADC_SR_STRT))
         {
             ADC2->CR2 = (ADC2->CR2 & ~ADC_CR2_SWSTART)|(1 << ADC_CR2_SWSTART_Pos);
         }
-
-        while((ADC2->SR & ADC_SR_EOC) != ADC_SR_EOC );//ESPERA A CONVERSAO TERMINAR
-        ADC2->SR &= ~ADC_SR_EOC;
-				t = ADC2->DR;
-				for (i=0; i < 100 ;i ++);
+				
+				//while(((ADC2->SR & ADC_SR_EOC) == reset) && (count < timeout)) count++;
+        while((ADC->CSR & ADC_CSR_EOC2) != ADC_CSR_EOC2 );//ESPERA A CONVERSAO TERMINAR
+        ADC->CSR &= ~ADC_CSR_EOC2;
+				//for (i=0; i < 100 ;i ++);
+				data = ADC2->DR;
     #endif
 	}
 }
