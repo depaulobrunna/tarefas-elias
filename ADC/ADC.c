@@ -20,11 +20,15 @@ int main(void)
     
 	adc->CR1 = (adc->CR1 & ~(ADC_CR1_RES|ADC_CR1_AWDEN))|(2 << ADC_CR1_RES_Pos);
 	adc->SQR1 = (adc->SQR1 & ~ADC_SQR1_L)|(0 << ADC_SQR1_L_Pos);
-	adc->SQR3 = (adc->SQR3 & ~ADC_SQR3_SQ1)|(1 << ADC_SQR3_SQ1_Pos);
+	adc->SQR3 = (adc->SQR3 & ~ADC_SQR3_SQ1)|(0 << ADC_SQR3_SQ1_Pos);
 	adc->SMPR2 = (adc->SMPR2 & ~ADC_SMPR2_SMP1)|(8 << ADC_SMPR2_SMP1_Pos);
 	adc->CR2 = (adc->CR2 & ~(ADC_CR2_CONT|ADC_CR2_ADON))|((1 << ADC_CR2_CONT_Pos)|(1 << ADC_CR2_ADON_Pos));
 	
+#if 0
+	adc->CR2 = ( (adc->CR2 & ~(ADC_CR2_EOCS))| (1 << ADC_CR2_EOCS_Pos));
 	
+
+#endif	
 	while(1)
 	{
 #if 1	
@@ -38,9 +42,11 @@ int main(void)
 //		adc->SR &= ~ADC_SR_EOC;
 
 		data = adc->DR;
+		#if 1
 		tick = 0;
 		while(tick < 1000);
 		volts = (float)((float)((uint8_t)adc->DR)/(float)255 * 3.3f);
+		#endif
 			
 #endif
 	}
