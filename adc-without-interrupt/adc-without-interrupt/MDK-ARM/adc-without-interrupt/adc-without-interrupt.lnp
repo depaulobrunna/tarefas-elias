@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp
+"adc-without-interrupt\startup_stm32f407xx.o"
+"adc-without-interrupt\stm32f4xx_hal_flash_ramfunc.o"
+"adc-without-interrupt\stm32f4xx_hal_flash_ex.o"
+"adc-without-interrupt\stm32f4xx_hal_rcc_1.o"
+"adc-without-interrupt\stm32f4xx_hal_tim_ex.o"
+"adc-without-interrupt\stm32f4xx_hal_adc_1.o"
+"adc-without-interrupt\stm32f4xx_hal_cortex_1.o"
+"adc-without-interrupt\stm32f4xx_hal_adc_ex_1.o"
+"adc-without-interrupt\stm32f4xx_hal_flash.o"
+"adc-without-interrupt\stm32f4xx_hal_gpio_1.o"
+"adc-without-interrupt\stm32f4xx_hal_1.o"
+"adc-without-interrupt\stm32f4xx_hal_tim.o"
+"adc-without-interrupt\stm32f4xx_hal_dma_ex_1.o"
+"adc-without-interrupt\stm32f4xx_hal_pwr_ex_1.o"
+"adc-without-interrupt\stm32f4xx_hal_rcc_ex_1.o"
+"adc-without-interrupt\stm32f4xx_hal_pwr_1.o"
+"adc-without-interrupt\stm32f4xx_hal_dma_1.o"
+"adc-without-interrupt\stm32f4xx_it.o"
+"adc-without-interrupt\stm32f4xx_hal_msp.o"
+"adc-without-interrupt\main.o"
+"adc-without-interrupt\system_stm32f4xx_1.o"
+--library_type=microlib --strict --scatter "adc-without-interrupt\adc-without-interrupt.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "adc-without-interrupt.map" -o adc-without-interrupt\adc-without-interrupt.axf
