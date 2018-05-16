@@ -4,13 +4,16 @@
 #define SECONDS(x)			(uint32_t)(x * MILISECONDS(1000))
 
 #define INVERTE_LED			GPIOD->ODR ^= GPIO_ODR_OD12;
-#define SYSTICK_TIME		SECONDS(1)
+#define USE_SYSTICK
+#ifdef USE_SYSTICK
+	#define SYSTICK_TIME		MILISECONDS(10)
+#endif
 
-uint8_t i;
+uint32_t i;
 float volts = 0.0f;
 volatile uint32_t tick = 0;
-int data [100];
-int *point = &data[0];
+uint8_t data[1000];
+uint8_t *point = &data[0];
 
 void SysTick_Handler(void);
 
@@ -20,9 +23,9 @@ int main(void)
 {
 	RCC -> AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 	GPIOD -> MODER |= GPIO_MODER_MODER12_0;
-	
+#ifdef USE_SYSTICK
 	SysTick_Config(SystemCoreClock/1000);
-	
+#endif
 	//GPIO CFG(ANALOG MODE)
 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
@@ -39,21 +42,22 @@ int main(void)
 	
 	while(1)
 	{
-		adc->CR2 = (adc->CR2 & ~ADC_CR2_SWSTART)|(1 << ADC_CR2_SWSTART_Pos);
- 		while((adc->SR & ADC_SR_EOC)==0);//ESPERA A CONVERSAO TERMINAR
 		
-		volts = (float)((float)((uint8_t)adc->DR)/(float)255 * 3.0f);
+		
+		//volts = (float)((float)((uint8_t)adc->DR)/(float)255 * 3.0f);
 
-		#if 1
+		for (i=0; i < 1000; i++)
+		{
+			adc->CR2 = (adc->CR2 & ~ADC_CR2_SWSTART)|(1 << ADC_CR2_SWSTART_Pos);
+			while((adc->SR & ADC_SR_EOC)==0);//ESPERA A CONVERSAO TERMINAR
+			
+			point[i] = adc->DR;
+			
 			tick = 0;
 			while(tick < SYSTICK_TIME);
-		#else
-			for (i=0; i > 100; i++)
-			{
-				point[i] = adc->DR;
-			}
-		#endif
-		INVERTE_LED
+		}
+		while(1);
+//		INVERTE_LED
 	}
 }
 
