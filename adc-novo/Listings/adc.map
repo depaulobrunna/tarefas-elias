@@ -4,6 +4,8 @@ Component: ARM Compiler 5.06 update 5 (build 528) Tool: armlink [4d35e2]
 
 Section Cross References
 
+    adc.o(i.ADC_IRQHandler) refers to adc.o(.data) for adc
+    adc.o(i.ADC_IRQHandler) refers to adc.o(.bss) for data
     adc.o(i.SysTick_Handler) refers to adc.o(.data) for tick
     adc.o(i.main) refers to system_stm32f4xx.o(.data) for SystemCoreClock
     adc.o(i.main) refers to adc.o(.data) for adc
@@ -256,20 +258,20 @@ Image Symbol Table
     .text                                    0x080002e0   Section        2  use_no_semi.o(.text)
     .text                                    0x080002e2   Section        0  indicate_semi.o(.text)
     i.ADC_IRQHandler                         0x080002e4   Section        0  adc.o(i.ADC_IRQHandler)
-    i.SysTick_Handler                        0x080002f8   Section        0  adc.o(i.SysTick_Handler)
-    i.SystemInit                             0x08000308   Section        0  system_stm32f4xx.o(i.SystemInit)
-    i.main                                   0x0800036c   Section        0  adc.o(i.main)
-    x$fpl$fpinit                             0x08000568   Section       10  fpinit.o(x$fpl$fpinit)
-    $v0                                      0x08000568   Number         0  fpinit.o(x$fpl$fpinit)
-    .data                                    0x20000000   Section       32  adc.o(.data)
-    .data                                    0x20000020   Section        4  system_stm32f4xx.o(.data)
-    .bss                                     0x20000024   Section      100  adc.o(.bss)
-    .bss                                     0x20000088   Section       96  libspace.o(.bss)
-    HEAP                                     0x200000e8   Section      512  startup_stm32f407xx.o(HEAP)
-    Heap_Mem                                 0x200000e8   Data         512  startup_stm32f407xx.o(HEAP)
-    STACK                                    0x200002e8   Section     1024  startup_stm32f407xx.o(STACK)
-    Stack_Mem                                0x200002e8   Data        1024  startup_stm32f407xx.o(STACK)
-    __initial_sp                             0x200006e8   Data           0  startup_stm32f407xx.o(STACK)
+    i.SysTick_Handler                        0x08000308   Section        0  adc.o(i.SysTick_Handler)
+    i.SystemInit                             0x08000318   Section        0  system_stm32f4xx.o(i.SystemInit)
+    i.main                                   0x0800037c   Section        0  adc.o(i.main)
+    x$fpl$fpinit                             0x08000578   Section       10  fpinit.o(x$fpl$fpinit)
+    $v0                                      0x08000578   Number         0  fpinit.o(x$fpl$fpinit)
+    .data                                    0x20000000   Section       24  adc.o(.data)
+    .data                                    0x20000018   Section        4  system_stm32f4xx.o(.data)
+    .bss                                     0x2000001c   Section       10  adc.o(.bss)
+    .bss                                     0x20000028   Section       96  libspace.o(.bss)
+    HEAP                                     0x20000088   Section      512  startup_stm32f407xx.o(HEAP)
+    Heap_Mem                                 0x20000088   Data         512  startup_stm32f407xx.o(HEAP)
+    STACK                                    0x20000288   Section     1024  startup_stm32f407xx.o(STACK)
+    Stack_Mem                                0x20000288   Data        1024  startup_stm32f407xx.o(STACK)
+    __initial_sp                             0x20000688   Data           0  startup_stm32f407xx.o(STACK)
 
     Global Symbols
 
@@ -458,27 +460,25 @@ Image Symbol Table
     __I$use$semihosting                      0x080002e1   Thumb Code     0  use_no_semi.o(.text)
     __use_no_semihosting_swi                 0x080002e1   Thumb Code     2  use_no_semi.o(.text)
     __semihosting_library_function           0x080002e3   Thumb Code     0  indicate_semi.o(.text)
-    ADC_IRQHandler                           0x080002e5   Thumb Code    14  adc.o(i.ADC_IRQHandler)
-    SysTick_Handler                          0x080002f9   Thumb Code    12  adc.o(i.SysTick_Handler)
-    SystemInit                               0x08000309   Thumb Code    82  system_stm32f4xx.o(i.SystemInit)
-    main                                     0x0800036d   Thumb Code   474  adc.o(i.main)
-    _fp_init                                 0x08000569   Thumb Code    10  fpinit.o(x$fpl$fpinit)
-    __fplib_config_fpu_vfp                   0x08000571   Thumb Code     0  fpinit.o(x$fpl$fpinit)
-    __fplib_config_pureend_doubles           0x08000571   Thumb Code     0  fpinit.o(x$fpl$fpinit)
-    Region$$Table$$Base                      0x08000574   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08000594   Number         0  anon$$obj.o(Region$$Table)
-    i                                        0x20000000   Data           4  adc.o(.data)
-    temp                                     0x20000004   Data           4  adc.o(.data)
-    volts                                    0x20000008   Data           4  adc.o(.data)
-    tick                                     0x2000000c   Data           4  adc.o(.data)
-    point                                    0x20000010   Data           4  adc.o(.data)
-    dado                                     0x20000014   Data           1  adc.o(.data)
-    adc                                      0x20000018   Data           4  adc.o(.data)
-    gpio                                     0x2000001c   Data           4  adc.o(.data)
-    SystemCoreClock                          0x20000020   Data           4  system_stm32f4xx.o(.data)
-    data                                     0x20000024   Data         100  adc.o(.bss)
-    __libspace_start                         0x20000088   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x200000e8   Data           0  libspace.o(.bss)
+    ADC_IRQHandler                           0x080002e5   Thumb Code    24  adc.o(i.ADC_IRQHandler)
+    SysTick_Handler                          0x08000309   Thumb Code    12  adc.o(i.SysTick_Handler)
+    SystemInit                               0x08000319   Thumb Code    82  system_stm32f4xx.o(i.SystemInit)
+    main                                     0x0800037d   Thumb Code   466  adc.o(i.main)
+    _fp_init                                 0x08000579   Thumb Code    10  fpinit.o(x$fpl$fpinit)
+    __fplib_config_fpu_vfp                   0x08000581   Thumb Code     0  fpinit.o(x$fpl$fpinit)
+    __fplib_config_pureend_doubles           0x08000581   Thumb Code     0  fpinit.o(x$fpl$fpinit)
+    Region$$Table$$Base                      0x08000584   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x080005a4   Number         0  anon$$obj.o(Region$$Table)
+    volts                                    0x20000000   Data           4  adc.o(.data)
+    tick                                     0x20000004   Data           4  adc.o(.data)
+    i                                        0x20000008   Data           4  adc.o(.data)
+    point                                    0x2000000c   Data           4  adc.o(.data)
+    adc                                      0x20000010   Data           4  adc.o(.data)
+    gpio                                     0x20000014   Data           4  adc.o(.data)
+    SystemCoreClock                          0x20000018   Data           4  system_stm32f4xx.o(.data)
+    data                                     0x2000001c   Data          10  adc.o(.bss)
+    __libspace_start                         0x20000028   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x20000088   Data           0  libspace.o(.bss)
 
 
 
@@ -488,9 +488,9 @@ Memory Map of the image
 
   Image Entry point : 0x08000229
 
-  Load Region LR_1 (Base: 0x08000000, Size: 0x000005b8, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x08000000, Size: 0x000005c0, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00000594, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000005a4, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -552,31 +552,32 @@ Memory Map of the image
     0x080002e0   0x080002e0   0x00000002   Code   RO          219    .text               c_w.l(use_no_semi.o)
     0x080002e2   0x080002e2   0x00000000   Code   RO          221    .text               c_w.l(indicate_semi.o)
     0x080002e2   0x080002e2   0x00000002   PAD
-    0x080002e4   0x080002e4   0x00000014   Code   RO            4    i.ADC_IRQHandler    adc.o
-    0x080002f8   0x080002f8   0x00000010   Code   RO            5    i.SysTick_Handler   adc.o
-    0x08000308   0x08000308   0x00000064   Code   RO           78    i.SystemInit        system_stm32f4xx.o
-    0x0800036c   0x0800036c   0x000001fc   Code   RO            6    i.main              adc.o
-    0x08000568   0x08000568   0x0000000a   Code   RO          206    x$fpl$fpinit        fz_wm.l(fpinit.o)
-    0x08000572   0x08000572   0x00000002   PAD
-    0x08000574   0x08000574   0x00000020   Data   RO          274    Region$$Table       anon$$obj.o
+    0x080002e4   0x080002e4   0x00000024   Code   RO            4    i.ADC_IRQHandler    adc.o
+    0x08000308   0x08000308   0x00000010   Code   RO            5    i.SysTick_Handler   adc.o
+    0x08000318   0x08000318   0x00000064   Code   RO           78    i.SystemInit        system_stm32f4xx.o
+    0x0800037c   0x0800037c   0x000001fc   Code   RO            6    i.main              adc.o
+    0x08000578   0x08000578   0x0000000a   Code   RO          206    x$fpl$fpinit        fz_wm.l(fpinit.o)
+    0x08000582   0x08000582   0x00000002   PAD
+    0x08000584   0x08000584   0x00000020   Data   RO          274    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x08000594, Size: 0x00000024, Max: 0xffffffff, ABSOLUTE)
-
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x20000000   0x08000594   0x00000020   Data   RW            8    .data               adc.o
-    0x20000020   0x080005b4   0x00000004   Data   RW           80    .data               system_stm32f4xx.o
-
-
-    Execution Region ER_ZI (Exec base: 0x20000024, Load base: 0x080005b8, Size: 0x000006c4, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x080005a4, Size: 0x0000001c, Max: 0xffffffff, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000024        -       0x00000064   Zero   RW            7    .bss                adc.o
-    0x20000088        -       0x00000060   Zero   RW          148    .bss                c_w.l(libspace.o)
-    0x200000e8        -       0x00000200   Zero   RW           68    HEAP                startup_stm32f407xx.o
-    0x200002e8        -       0x00000400   Zero   RW           67    STACK               startup_stm32f407xx.o
+    0x20000000   0x080005a4   0x00000018   Data   RW            8    .data               adc.o
+    0x20000018   0x080005bc   0x00000004   Data   RW           80    .data               system_stm32f4xx.o
+
+
+    Execution Region ER_ZI (Exec base: 0x2000001c, Load base: 0x080005c0, Size: 0x0000066c, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x2000001c        -       0x0000000a   Zero   RW            7    .bss                adc.o
+    0x20000026   0x080005c0   0x00000002   PAD
+    0x20000028        -       0x00000060   Zero   RW          148    .bss                c_w.l(libspace.o)
+    0x20000088        -       0x00000200   Zero   RW           68    HEAP                startup_stm32f407xx.o
+    0x20000288        -       0x00000400   Zero   RW           67    STACK               startup_stm32f407xx.o
 
 
 ==============================================================================
@@ -586,14 +587,14 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       544         44          0         32        100     588626   adc.o
+       560         58          0         24         10     588604   adc.o
         64         26        392          0       1536        880   startup_stm32f407xx.o
        100         18          0          4          0       1399   system_stm32f4xx.o
 
     ----------------------------------------------------------------------
-       708         88        424         36       1636     590905   Object Totals
+       724        102        424         28       1548     590883   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-         0          0          0          0          0          0   (incl. Padding)
+         0          0          0          0          2          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -642,15 +643,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      1004        104        424         36       1732     591249   Grand Totals
-      1004        104        424         36       1732     591249   ELF Image Totals
-      1004        104        424         36          0          0   ROM Totals
+      1020        118        424         28       1644     591227   Grand Totals
+      1020        118        424         28       1644     591227   ELF Image Totals
+      1020        118        424         28          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 1428 (   1.39kB)
-    Total RW  Size (RW Data + ZI Data)              1768 (   1.73kB)
-    Total ROM Size (Code + RO Data + RW Data)       1464 (   1.43kB)
+    Total RO  Size (Code + RO Data)                 1444 (   1.41kB)
+    Total RW  Size (RW Data + ZI Data)              1672 (   1.63kB)
+    Total ROM Size (Code + RO Data + RW Data)       1472 (   1.44kB)
 
 ==============================================================================
 
