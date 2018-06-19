@@ -22,16 +22,20 @@ Dialog DLL:      TCM.DLL V1.32.0.0
  
 <h2>Project:</h2>
 C:\Users\depau\Documents\git_brunna\tarefas-elias\adc-interrupt-time-event\adc.uvprojx
-Project File Date:  05/18/2018
+Project File Date:  06/19/2018
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
 assembling startup_stm32f407xx.s...
 compiling system_stm32f4xx.c...
+compiling adc.c...
+adc.c(97): warning:  #1-D: last line of file ends without a newline
+  }
+adc.c: 1 warning, 0 errors
 linking...
-Program Size: Code=940 RO-data=424 RW-data=20 ZI-data=5636  
-".\Objects\adc.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=996 RO-data=424 RW-data=24 ZI-data=18016  
+".\Objects\adc.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -55,14 +59,14 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: Keil::Device:Startup:2.6.2
-      Source file:   MDK\Device\Source\ARM\STM32F40xxx_41xxx_OPT.s
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
-      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f407xx.s
       Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
+      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f407xx.s
+      Source file:   MDK\Device\Source\ARM\STM32F40xxx_41xxx_OPT.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:11
 </pre>
 </body>
 </html>
