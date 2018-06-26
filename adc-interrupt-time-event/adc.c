@@ -54,18 +54,23 @@ int main(void)
 	TIM2->CCR2 = 8 - 1;//tempo alto
 	TIM2->CCER = (TIM2->CCER & ~TIM_CCER_CC2E)| (1 << TIM_CCER_CC2E_Pos);
 	
-	adc->CR2 |= ADC_CR2_ADON_Pos;
+	adc->CR2 |= ADC_CR2_ADON;
 	TIM2->CR1 |= TIM_CR1_CEN;
 	
-	while(i < NUM_AMOST);
-
-	RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
-	RCC->APB2ENR &= ~RCC_APB2ENR_ADC3EN;
-	while(1);
+	while(1)
+	{
+		GPIOD->ODR ^= GPIO_ODR_OD12;
+	}
 }
 
 void ADC_IRQHandler(void)
 {
-	data[i++] = (uint32_t) adc->DR;
-	GPIOD->ODR ^= GPIO_ODR_OD12;
+	if(i < 4096)
+	{
+		data[i++] = (uint32_t) adc->DR;
+	}
+	else
+	{
+		adc->CR2 &= ~ADC_CR2_ADON;
+	}
 }
