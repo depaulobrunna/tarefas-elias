@@ -28,7 +28,7 @@ int main(void)
 						  (1 << ADC_CR1_EOCIE_Pos); // INTERRUPT ABLE
 	adc->SQR1 |= (0 << ADC_SQR1_L_Pos); //1 CONV
 	adc->SQR3 |= (0 << ADC_SQR3_SQ1_Pos); //CHANEL 0
-	adc->SMPR2 |= (8 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME
+	adc->SMPR2 = (6 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME
 	adc->CR2 |= (1 << ADC_CR2_CONT_Pos)| //continuous mode on
 							(1 << ADC_CR2_ADON_Pos)| //TURN ON ADC
 							(1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
@@ -59,7 +59,12 @@ int main(void)
 	
 	while(1)
 	{
-		GPIOD->ODR ^= GPIO_ODR_OD12;
+		while(!(adc->SR & ADC_SR_STRT))
+		{
+			adc->SR &= ~ADC_SR_STRT;
+			GPIOD->ODR |= GPIO_ODR_OD12;
+		}
+		
 	}
 }
 
@@ -68,6 +73,7 @@ void ADC_IRQHandler(void)
 	if(i < 4096)
 	{
 		data[i++] = (uint32_t) adc->DR;
+		GPIOD->ODR &= ~GPIO_ODR_OD12;
 	}
 	else
 	{
