@@ -2,11 +2,11 @@
 
 #define BL GPIO_ODR_OD15
 
-char strg_abc[3] = "abc";
-char strg_zzz[3] = "zzz";
+char strg_abc[26] = "abcdefghijklmnopqrstuvwxyz";
+char strg_zyx[26] = "zyxwvutsrqponmlkjihgfedcba";
 
 char *address_abc = &strg_abc[0];
-char *address_zzz = &strg_zzz[0];
+char *address_zzz = &strg_zyx[0];
 
 int main(void)
 {
@@ -18,19 +18,24 @@ int main(void)
 	
 	
 	//DMA CFG
-	RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN;
-	DMA1_Stream0->CR = (1 << DMA_SxCR_DBM_Pos)|
+	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+	DMA2_Stream0->CR = (1 << DMA_SxCR_DBM_Pos)|
 										 (0 << DMA_SxCR_MSIZE_Pos)|
 										 (1 << DMA_SxCR_MINC_Pos)|
 										 (2 << DMA_SxCR_DIR_Pos)|
 										 (0 << DMA_SxCR_TCIE_Pos);
-	DMA1_Stream0->NDTR = 3;
-	DMA1_Stream0->M0AR = (uint32_t)address_abc;
-	DMA1_Stream0->M1AR = (uint32_t)address_zzz;
-	
-	while((DMA1_Stream0->CR & DMA_SxCR_EN_Msk) == 0 && num--)
+	DMA2_Stream0->NDTR = 26;
+	DMA2_Stream0->M0AR = (uint32_t)address_abc;
+	DMA2_Stream0->M1AR = (uint32_t)address_zzz;
+
+ #if 0	
+	DMA2_Stream0->CR |= DMA_SxCR_EN;
+	while(1);
+ 
+ #else
+	while((DMA2_Stream0->CR & DMA_SxCR_EN_Msk) == 0 && num--)
 	{
-		DMA1_Stream0->CR |= DMA_SxCR_EN;
+		DMA2_Stream0->CR |= DMA_SxCR_EN;
 	}
 	
 	if(num == 0)
@@ -38,8 +43,8 @@ int main(void)
 		while(1);
 	}
 		
-	while(DMA1->LIFCR & ~DMA_LIFCR_CTEIF0);
-	DMA1_Stream0->CR &= (~DMA_SxCR_EN_Msk);
+	while(DMA2->LIFCR & ~DMA_LIFCR_CTEIF0);
+	DMA2_Stream0->CR &= (~DMA_SxCR_EN_Msk);
 	while(1);
-	
+#endif
 }
