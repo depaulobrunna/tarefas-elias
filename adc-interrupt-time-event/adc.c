@@ -1,8 +1,9 @@
 #include "stm32f4xx.h"                  // Device header
 
-#define NUM_AMOST				4096
+#define NUM_AMOST				1096
 
 void ADC_IRQHandler(void);
+void DMA2_Stream0_IRQHandler(void);
 
 volatile uint32_t i = 0;
 volatile uint32_t data[NUM_AMOST];
@@ -14,8 +15,8 @@ int main(void)
 {
 	//led cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-	GPIOD->MODER |= GPIO_MODER_MODER12_0;
-	GPIOD->ODR &= ~GPIO_ODR_OD12;
+	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0;
+	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13);
 	
 	//dma cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
@@ -31,7 +32,7 @@ int main(void)
 										 (1 << DMA_SxCR_MINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
 										 (1 << DMA_SxCR_PINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
 										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
-										 (0 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt disable
+										 (0 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt DISable
   DMA2_Stream0->CR |= DMA_SxCR_EN;
 	
 	//adc pin cfg
@@ -46,11 +47,11 @@ int main(void)
 	adc->SQR1 |= (0 << ADC_SQR1_L_Pos); //1 CONV
 	adc->SQR3 |= (0 << ADC_SQR3_SQ1_Pos); //CHANEL 0
 	adc->SMPR2 = (0 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME 
-	adc->CR2 |= (0 << ADC_CR2_CONT_Pos)| //continuous off
+	adc->CR2 |= (1 << ADC_CR2_CONT_Pos)| //continuous off
 							(1 << ADC_CR2_ADON_Pos)| //TURN ON ADC
 							(1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
-							(3 << ADC_CR2_EXTSEL_Pos); //EXSEL TIMER CANAL 2 EVENT
-	
+							(3 << ADC_CR2_EXTSEL_Pos)| //EXSEL TIMER CANAL 2 EVENT
+							(1 << ADC_CR2_DMA_Pos);//Direct memory access mode ABLE 
 	NVIC_EnableIRQ(ADC_IRQn);
 
 	//confg pin timmer 
@@ -73,8 +74,6 @@ int main(void)
 	
 	adc->CR2 |= ADC_CR2_ADON;
 	TIM2->CR1 |= TIM_CR1_CEN;
-	
-	while(i < NUM_AMOST);
 
 	RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
 	RCC->APB2ENR &= ~RCC_APB2ENR_ADC3EN;
@@ -83,6 +82,10 @@ int main(void)
 
 void ADC_IRQHandler(void)
 {
-	data[i++] = (uint32_t) adc->DR;
-	GPIOD->ODR ^= GPIO_ODR_OD12;
+	GPIOD->ODR |= GPIO_ODR_OD12;
+	
+}
+void DMA2_Stream0_IRQHandler(void)
+{
+	GPIOD->ODR |= GPIO_ODR_OD13;
 }
