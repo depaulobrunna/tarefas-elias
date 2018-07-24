@@ -57,30 +57,15 @@ int main(void)
 	adc->CR2 |= ADC_CR2_ADON;
 	TIM2->CR1 |= TIM_CR1_CEN;
 	
-	while(1)
-	{
-	#if 1
-		while(!(adc->SR & ADC_SR_STRT))
-		{
-			
-			GPIOD->ODR |= GPIO_ODR_OD12;
-		}
-		adc->SR &= ~ADC_SR_STRT;
-		while(!(adc->SR & ADC_SR_EOC));
-	#endif
-	}
+	while(i < NUM_AMOST);
+
+	RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
+	RCC->APB2ENR &= ~RCC_APB2ENR_ADC3EN;
+	while(1);
 }
 
 void ADC_IRQHandler(void)
 {
-	if(i < 4096)
-	{
-		data[i++] = (uint32_t) adc->DR;
-		//GPIOD->ODR ^= GPIO_ODR_OD12;
-		
-	}
-	else
-	{
-		adc->CR2 &= ~ADC_CR2_ADON;;
-	}
+	data[i++] = (uint32_t) adc->DR;
+	GPIOD->ODR ^= GPIO_ODR_OD12;
 }
