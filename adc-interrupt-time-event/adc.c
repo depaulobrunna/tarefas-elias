@@ -62,9 +62,10 @@ int main(void)
 	#if 1
 		while(!(adc->SR & ADC_SR_STRT))
 		{
-			adc->SR &= ~ADC_SR_STRT;
+			
 			GPIOD->ODR |= GPIO_ODR_OD12;
 		}
+		adc->SR &= ~ADC_SR_STRT;
 		while(!(adc->SR & ADC_SR_EOC));
 	#endif
 	}
@@ -75,10 +76,11 @@ void ADC_IRQHandler(void)
 	if(i < 4096)
 	{
 		data[i++] = (uint32_t) adc->DR;
+		//GPIOD->ODR ^= GPIO_ODR_OD12;
 		
 	}
 	else
 	{
-		i = 0;
+		adc->CR2 &= ~ADC_CR2_ADON;;
 	}
 }
