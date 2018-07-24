@@ -17,6 +17,23 @@ int main(void)
 	GPIOD->MODER |= GPIO_MODER_MODER12_0;
 	GPIOD->ODR &= ~GPIO_ODR_OD12;
 	
+	//dma cfg
+	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+	DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+	DMA2_Stream0->NDTR = sizeof(data);
+	DMA2_Stream0->PAR = (uint32_t)((uint32_t *)&adc->DR);
+	DMA2_Stream0->M0AR = (uint32_t)((uint32_t *)&data[0]);
+	DMA2_Stream0->CR = (2 << DMA_SxCR_CHSEL_Pos)|//Channel selection = 2 (for adc3)
+										 (2 << DMA_SxCR_PL_Pos)|//Priority level High
+										 (0 << DMA_SxCR_DBM_Pos)|//double mode disable (nao suporta transferencias memory-memory)
+										 (2 << DMA_SxCR_MSIZE_Pos)|//Memory data size = word (32-bit)
+										 (2 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = word (32-bit)
+										 (1 << DMA_SxCR_MINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
+										 (1 << DMA_SxCR_PINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
+										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
+										 (0 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt disable
+  DMA2_Stream0->CR |= DMA_SxCR_EN;
+	
 	//adc pin cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	GPIOA->MODER |= (3 << GPIO_MODER_MODE0_Pos);//PA 0 analog mode
