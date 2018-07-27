@@ -17,7 +17,7 @@ int main(void)
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0;
 	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13);
-	
+# if 1
 	//dma cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
 	DMA2_Stream0->CR &= ~DMA_SxCR_EN;
@@ -34,7 +34,7 @@ int main(void)
 										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
 										 (0 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt DISable
   DMA2_Stream0->CR |= DMA_SxCR_EN;
-	
+#endif
 	//adc pin cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	GPIOA->MODER |= (3 << GPIO_MODER_MODE0_Pos);//PA 0 analog mode
@@ -75,8 +75,7 @@ int main(void)
 	adc->CR2 |= ADC_CR2_ADON;
 	TIM2->CR1 |= TIM_CR1_CEN;
 
-	RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
-	RCC->APB2ENR &= ~RCC_APB2ENR_ADC3EN;
+	
 	while(1);
 }
 
