@@ -15,8 +15,8 @@ int main(void)
 {
 	//led cfg
  	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0|GPIO_MODER_MODER14_0; //12gr 13og
-	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13|GPIO_ODR_OD14);
+	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0|GPIO_MODER_MODER14_0|GPIO_MODER_MODER15_0; //12gr 13og 14rd 15bl
+	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13|GPIO_ODR_OD14|GPIO_ODR_OD15);
 # if 1
 	//dma cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
@@ -33,8 +33,8 @@ int main(void)
 										 (0 << DMA_SxCR_PINC_Pos)|//Memory increment mode = disable
 										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
 										 (1 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt able
-  DMA2_Stream0->CR |= DMA_SxCR_EN;
 	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+	DMA2_Stream0->CR |= DMA_SxCR_EN;
 	
 #endif
 	//adc pin cfg
@@ -49,12 +49,12 @@ int main(void)
 	adc->SQR1 |= (0 << ADC_SQR1_L_Pos); //1 CONV
 	adc->SQR3 |= (0 << ADC_SQR3_SQ1_Pos); //CHANEL 0
 	adc->SMPR2 = (0 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME 
-	adc->CR2 |= (0 << ADC_CR2_CONT_Pos)| //continuous oFF
+	adc->CR2 |= (1 << ADC_CR2_CONT_Pos)| //continuous on
 							(1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
 							(3 << ADC_CR2_EXTSEL_Pos)| //EXSEL TIMER CANAL 2 EVENT
 							(1 << ADC_CR2_EOCS_Pos)| // End of conversion selection = the EOC bit is set at the end of each regular conversion
 							(1 << ADC_CR2_DMA_Pos)|//Direct memory access mode ABLE
-							(0 << ADC_CR2_DDS_Pos);//DMA requests are issued as long as data are converted and DMA=1  ABLE
+							(1 << ADC_CR2_DDS_Pos);//DMA requests are issued as long as data are converted and DMA=1  ABLE
 	NVIC_EnableIRQ(ADC_IRQn);
 
 	//confg pin timmer 
@@ -77,17 +77,21 @@ int main(void)
 	
 	adc->CR2 |= ADC_CR2_ADON;
 	TIM2->CR1 |= TIM_CR1_CEN;
-
+	
 	
 	while(1)
 	{
 	
 		
 	#if 1
-		i = adc->DR;
-		while(!(adc->SR & ADC_SR_STRT));
-		
+		//i = adc->DR;
+		while(!(DMA2->LISR & DMA_LISR_HTIF0));
+		DMA2->LISR &= ~DMA_LISR_HTIF0;
+		GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=AZUL
+		while(!(DMA2->LISR & DMA_LISR_TCIF0));
+		DMA2->LISR &= !DMA_LISR_TCIF0;
 		GPIOD->ODR ^= GPIO_ODR_OD14;//red
+		
 	#endif
 	}
 }
@@ -96,12 +100,13 @@ void ADC_IRQHandler(void)
 {
 	//An interrupt can be produced on the end of conversion adc
 	
-	GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=AZUL
+	GPIOD->ODR ^= GPIO_ODR_OD12;//GR
 	adc->SR &= ~ADC_SR_STRT;
 	
 }
 void DMA2_Stream0_IRQHandler(void)
 {
 	//Transfer complete dma
-	GPIOD->ODR ^= GPIO_ODR_OD12;//gr osc=ROXO
+	DMA2->LIFCR &= !DMA_LIFCR_CTCIF0;
+	GPIOD->ODR ^= GPIO_ODR_OD15;//bl osc=verd
 }
