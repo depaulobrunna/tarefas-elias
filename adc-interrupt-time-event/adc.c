@@ -21,14 +21,14 @@ int main(void)
 	//dma cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
 	DMA2_Stream0->CR &= ~DMA_SxCR_EN;
-	DMA2_Stream0->NDTR = sizeof(data);
+	DMA2_Stream0->NDTR = NUM_AMOST;
 	DMA2_Stream0->PAR = (uint32_t)((uint32_t *)&adc->DR);
 	DMA2_Stream0->M0AR = (uint32_t)((uint32_t *)&data[0]);
 	DMA2_Stream0->CR = (2 << DMA_SxCR_CHSEL_Pos)|//Channel selection = 2 (for adc3)
 										 (0 << DMA_SxCR_PL_Pos)|//Priority level LOW
 										 (0 << DMA_SxCR_DBM_Pos)|//double mode disable (nao suporta transferencias memory-memory)
-										 (1 << DMA_SxCR_MSIZE_Pos)|//Memory data size = half-word (16-bit)
-										 (1 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = half-word (16-bit)
+										 (2 << DMA_SxCR_MSIZE_Pos)|//Memory data size = word (32-bit)
+										 (2 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = word (32-bit)
 										 (1 << DMA_SxCR_MINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
 										 (0 << DMA_SxCR_PINC_Pos)|//Memory increment mode = disable
 									   (1 << DMA_SxCR_CIRC_Pos)|//Circular mode ON
