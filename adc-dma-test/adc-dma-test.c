@@ -1,6 +1,6 @@
 #include "stm32f4xx.h"                  // Device header
 
-#define NUM_AMOST				100
+#define NUM_AMOST				4096
 
 void ADC_IRQHandler(void);
 void DMA2_Stream0_IRQHandler(void);
@@ -14,9 +14,9 @@ GPIO_TypeDef *gpio = GPIOA;
 int main(void)
 {
 	//led cfg
- 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0|GPIO_MODER_MODER14_0|GPIO_MODER_MODER15_0; //12gr 13og 14rd 15bl
-	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13|GPIO_ODR_OD14|GPIO_ODR_OD15);
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0|GPIO_MODER_MODER14_0; //12gr 13og
+	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13|GPIO_ODR_OD14);
 # if 1
 	//dma cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
@@ -25,17 +25,16 @@ int main(void)
 	DMA2_Stream0->PAR = (uint32_t)((uint32_t *)&adc->DR);
 	DMA2_Stream0->M0AR = (uint32_t)((uint32_t *)&data[0]);
 	DMA2_Stream0->CR = (2 << DMA_SxCR_CHSEL_Pos)|//Channel selection = 2 (for adc3)
-										 (0 << DMA_SxCR_PL_Pos)|//Priority level LOW
+										 (2 << DMA_SxCR_PL_Pos)|//Priority level High
 										 (0 << DMA_SxCR_DBM_Pos)|//double mode disable (nao suporta transferencias memory-memory)
-										 (1 << DMA_SxCR_MSIZE_Pos)|//Memory data size = half-word (16-bit)
-										 (1 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = half-word (16-bit)
+										 (2 << DMA_SxCR_MSIZE_Pos)|//Memory data size = word (32-bit)
+										 (2 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = word (32-bit)
 										 (1 << DMA_SxCR_MINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
 										 (0 << DMA_SxCR_PINC_Pos)|//Memory increment mode = disable
-									   (1 << DMA_SxCR_CIRC_Pos)|//Circular mode ON
 										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
 										 (1 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt able
+  DMA2_Stream0->CR |= DMA_SxCR_EN;
 	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	DMA2_Stream0->CR |= DMA_SxCR_EN;
 	
 #endif
 	//adc pin cfg
@@ -50,12 +49,12 @@ int main(void)
 	adc->SQR1 |= (0 << ADC_SQR1_L_Pos); //1 CONV
 	adc->SQR3 |= (0 << ADC_SQR3_SQ1_Pos); //CHANEL 0
 	adc->SMPR2 = (0 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME 
-	adc->CR2 |= (1 << ADC_CR2_CONT_Pos)| //continuous on
+	adc->CR2 |= (0 << ADC_CR2_CONT_Pos)| //continuous oFF
 							(1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
 							(3 << ADC_CR2_EXTSEL_Pos)| //EXSEL TIMER CANAL 2 EVENT
 							(1 << ADC_CR2_EOCS_Pos)| // End of conversion selection = the EOC bit is set at the end of each regular conversion
-							(1 << ADC_CR2_DMA_Pos)|//Direct memory access mode ABLE
-							(1 << ADC_CR2_DDS_Pos);//DMA requests are issued as long as data are converted and DMA=1  ABLE
+							(1 << ADC_CR2_DMA_Pos)|//Direct memory access mode DISABLE
+							(1 << ADC_CR2_DDS_Pos);//DMA requests are issued as long as data are converted and DMA=1  DISABLE
 	NVIC_EnableIRQ(ADC_IRQn);
 
 	//confg pin timmer 
@@ -78,21 +77,16 @@ int main(void)
 	
 	adc->CR2 |= ADC_CR2_ADON;
 	TIM2->CR1 |= TIM_CR1_CEN;
-	
+
 	
 	while(1)
 	{
-	
-		
 	#if 0
-		//i = adc->DR;
-		while(!(DMA2->LISR & DMA_LISR_HTIF0));
-		DMA2->LISR &= ~DMA_LISR_HTIF0;
-		GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=AZUL
-		while(!(DMA2->LISR & DMA_LISR_TCIF0));
-		DMA2->LISR &= !DMA_LISR_TCIF0;
-		GPIOD->ODR ^= GPIO_ODR_OD14;//red
-		
+		i = adc->DR;
+		while(!(ADC3->SR & ADC_SR_EOC))
+		{ 
+			GPIOD->ODR ^= GPIO_ODR_OD14;//red
+		}
 	#endif
 	}
 }
@@ -100,14 +94,12 @@ int main(void)
 void ADC_IRQHandler(void)
 {
 	//An interrupt can be produced on the end of conversion adc
-	
-	GPIOD->ODR ^= GPIO_ODR_OD12;//GR
 	adc->SR &= ~ADC_SR_STRT;
+	GPIOD->ODR ^= GPIO_ODR_OD12;//gr
 	
 }
 void DMA2_Stream0_IRQHandler(void)
 {
 	//Transfer complete dma
-	//DMA2->LIFCR &= !DMA_LIFCR_CTCIF0;
-	GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=verd
+	GPIOD->ODR ^= GPIO_ODR_OD13;//og
 }

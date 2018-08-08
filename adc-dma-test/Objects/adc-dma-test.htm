@@ -1,9 +1,9 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html><head>
-<title>Static Call Graph - [.\Objects\adc.axf]</title></head>
+<title>Static Call Graph - [.\Objects\adc-dma-test.axf]</title></head>
 <body><HR>
-<H1>Static Call Graph for image .\Objects\adc.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Aug 07 20:57:55 2018
+<H1>Static Call Graph for image .\Objects\adc-dma-test.axf</H1><HR>
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Aug 07 16:10:23 2018
 <BR><P>
 <H3>Maximum Stack Usage =          8 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -33,7 +33,7 @@ Mutually Recursive functions
 <H3>
 Function Pointers
 </H3><UL>
- <LI><a href="#[1e]">ADC_IRQHandler</a> from adc.o(i.ADC_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
+ <LI><a href="#[1e]">ADC_IRQHandler</a> from adc-dma-test.o(i.ADC_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[6]">BusFault_Handler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[20]">CAN1_RX0_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[21]">CAN1_RX1_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
@@ -52,7 +52,7 @@ Function Pointers
  <LI><a href="#[1c]">DMA1_Stream5_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[1d]">DMA1_Stream6_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[3b]">DMA1_Stream7_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
- <LI><a href="#[44]">DMA2_Stream0_IRQHandler</a> from adc.o(i.DMA2_Stream0_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
+ <LI><a href="#[44]">DMA2_Stream0_IRQHandler</a> from adc-dma-test.o(i.DMA2_Stream0_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[45]">DMA2_Stream1_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[46]">DMA2_Stream2_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[47]">DMA2_Stream3_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
@@ -619,16 +619,16 @@ Global Symbols
 
 <P><STRONG><a name="[9f]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[1e]"></a>ADC_IRQHandler</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, adc.o(i.ADC_IRQHandler))
+<P><STRONG><a name="[1e]"></a>ADC_IRQHandler</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, adc-dma-test.o(i.ADC_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
 </UL>
-<P><STRONG><a name="[44]"></a>DMA2_Stream0_IRQHandler</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, adc.o(i.DMA2_Stream0_IRQHandler))
+<P><STRONG><a name="[44]"></a>DMA2_Stream0_IRQHandler</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, adc-dma-test.o(i.DMA2_Stream0_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
 </UL>
 <P><STRONG><a name="[5d]"></a>SystemInit</STRONG> (Thumb, 82 bytes, Stack size 0 bytes, system_stm32f4xx.o(i.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(.text)
 </UL>
-<P><STRONG><a name="[6d]"></a>main</STRONG> (Thumb, 402 bytes, Stack size 0 bytes, adc.o(i.main))
+<P><STRONG><a name="[6d]"></a>main</STRONG> (Thumb, 398 bytes, Stack size 0 bytes, adc-dma-test.o(i.main))
 <BR><BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
@@ -645,7 +645,7 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[75]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, adc.o(i.__NVIC_EnableIRQ))
+<P><STRONG><a name="[75]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, adc-dma-test.o(i.__NVIC_EnableIRQ))
 <BR><BR>[Called By]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 <P>
