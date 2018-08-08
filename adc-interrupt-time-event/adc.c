@@ -1,6 +1,6 @@
 #include "stm32f4xx.h"                  // Device header
 
-#define NUM_AMOST				100
+#define NUM_AMOST				10
 
 void ADC_IRQHandler(void);
 void DMA2_Stream0_IRQHandler(void);
@@ -25,13 +25,13 @@ int main(void)
 	DMA2_Stream0->PAR = (uint32_t)((uint32_t *)&adc->DR);
 	DMA2_Stream0->M0AR = (uint32_t)((uint32_t *)&data[0]);
 	DMA2_Stream0->CR = (2 << DMA_SxCR_CHSEL_Pos)|//Channel selection = 2 (for adc3)
-										 (0 << DMA_SxCR_PL_Pos)|//Priority level LOW
+										 (2 << DMA_SxCR_PL_Pos)|//Priority level high
 										 (0 << DMA_SxCR_DBM_Pos)|//double mode disable (nao suporta transferencias memory-memory)
 										 (2 << DMA_SxCR_MSIZE_Pos)|//Memory data size = word (32-bit)
 										 (2 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = word (32-bit)
 										 (1 << DMA_SxCR_MINC_Pos)|//Memory increment mode = Memory address pointer is incremented after each data transfer
 										 (0 << DMA_SxCR_PINC_Pos)|//Memory increment mode = disable
-									   (1 << DMA_SxCR_CIRC_Pos)|//Circular mode ON
+									   (1 << DMA_SxCR_CIRC_Pos)|//Circular mode Off
 										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
 										 (1 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt able
 	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
@@ -101,13 +101,15 @@ void ADC_IRQHandler(void)
 {
 	//An interrupt can be produced on the end of conversion adc
 	
-	GPIOD->ODR ^= GPIO_ODR_OD12;//GR
+	GPIOD->ODR ^= GPIO_ODR_OD12;//GR osc=verde
 	adc->SR &= ~ADC_SR_STRT;
 	
 }
 void DMA2_Stream0_IRQHandler(void)
 {
 	//Transfer complete dma
-	//DMA2->LIFCR &= !DMA_LIFCR_CTCIF0;
-	GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=verd
+	DMA2->LIFCR &= !DMA_LIFCR_CTCIF0;
+	GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=azul
+	TIM2->CR1 &= ~TIM_CR1_CEN;
+	//TIM2->CR1 |= TIM_CR1_CEN;
 }
