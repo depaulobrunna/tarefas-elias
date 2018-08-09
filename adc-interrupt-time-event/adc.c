@@ -1,22 +1,24 @@
 #include "stm32f4xx.h"                  // Device header
 
-#define NUM_AMOST				10
+#define NUM_AMOST				4096
 
 void ADC_IRQHandler(void);
 void DMA2_Stream0_IRQHandler(void);
 
-static volatile uint32_t i = 0;
-volatile uint32_t data[NUM_AMOST];
+static inline void startProcess(void);
+static inline void stopProcess(void);
 
 ADC_TypeDef *adc = ADC3;
 GPIO_TypeDef *gpio = GPIOA;
+volatile uint32_t data[NUM_AMOST];
+volatile uint32_t size = 0;
 
 int main(void)
 {
 	//led cfg
  	RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
-	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0|GPIO_MODER_MODER14_0|GPIO_MODER_MODER15_0; //12gr 13og 14rd 15bl
-	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13|GPIO_ODR_OD14|GPIO_ODR_OD15);
+	GPIOD->MODER |= GPIO_MODER_MODER12_0|GPIO_MODER_MODER13_0;//GPIO_MODER_MODER14_0|GPIO_MODER_MODER15_0; //12gr 13og 14rd 15bl
+	GPIOD->ODR &= ~(GPIO_ODR_OD12|GPIO_ODR_OD13);//|GPIO_ODR_OD14|GPIO_ODR_OD15);
 # if 1
 	//dma cfg
 	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
@@ -25,7 +27,7 @@ int main(void)
 	DMA2_Stream0->PAR = (uint32_t)((uint32_t *)&adc->DR);
 	DMA2_Stream0->M0AR = (uint32_t)((uint32_t *)&data[0]);
 	DMA2_Stream0->CR = (2 << DMA_SxCR_CHSEL_Pos)|//Channel selection = 2 (for adc3)
-										 (2 << DMA_SxCR_PL_Pos)|//Priority level high
+										 (0 << DMA_SxCR_PL_Pos)|//Priority level high
 										 (0 << DMA_SxCR_DBM_Pos)|//double mode disable (nao suporta transferencias memory-memory)
 										 (2 << DMA_SxCR_MSIZE_Pos)|//Memory data size = word (32-bit)
 										 (2 << DMA_SxCR_PSIZE_Pos)|//Peripheral data size = word (32-bit)
@@ -35,7 +37,6 @@ int main(void)
 										 (0 << DMA_SxCR_DIR_Pos)|//Data transfer direction = Peripheral-to-memory
 										 (1 << DMA_SxCR_TCIE_Pos);//Transfer complete interrupt able
 	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	DMA2_Stream0->CR |= DMA_SxCR_EN;
 	
 #endif
 	//adc pin cfg
@@ -44,20 +45,19 @@ int main(void)
 	
 	//adc cfg
 	RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
-	adc->CR2 &= ~ADC_CR2_ADON; 
+	adc->CR2 |= ADC_CR2_ADON; 
 	adc->CR1 |= (0 << ADC_CR1_RES_Pos)| //ADC 12BITS
 							(1 << ADC_CR1_DISCEN_Pos)| //Discontinuous mode on regular channels
-						  (1 << ADC_CR1_EOCIE_Pos); // INTERRUPT ABLE
+							(1 << ADC_CR1_EOCIE_Pos); // INTERRUPT ABLE
 	adc->SQR1 |= (0 << ADC_SQR1_L_Pos); //1 CONV
 	adc->SQR3 |= (0 << ADC_SQR3_SQ1_Pos); //CHANEL 0
 	adc->SMPR2 = (0 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME 
-	adc->CR2 |= (0 << ADC_CR2_CONT_Pos)| //continuous oFF
-							(1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
+	adc->CR2 |= (1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
 							(3 << ADC_CR2_EXTSEL_Pos)| //EXSEL TIMER CANAL 2 EVENT
 							(1 << ADC_CR2_EOCS_Pos)| // End of conversion selection = the EOC bit is set at the end of each regular conversion
 							(1 << ADC_CR2_DMA_Pos);//Direct memory access mode ABLE
 	NVIC_EnableIRQ(ADC_IRQn);
-
+	
 	//confg pin timmer 
 	#if 1
 	RCC -> AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
@@ -75,35 +75,42 @@ int main(void)
 	TIM2->CR1 |= TIM_CR1_ARPE;
 	TIM2->CCR2 = 8 - 1;//tempo alto
 	TIM2->CCER = (TIM2->CCER & ~TIM_CCER_CC2E)| (1 << TIM_CCER_CC2E_Pos);
-	
-	adc->CR2 |= ADC_CR2_ADON;
-	TIM2->CR1 |= TIM_CR1_CEN;
-	
-	
+
+	startProcess();
 	while(1);
+}
+
+static inline void startProcess(void)
+{
+	DMA2_Stream0->CR |= DMA_SxCR_EN;
+	adc->CR2 |= ADC_CR2_SWSTART;
+	
+	TIM2->CR1 |= TIM_CR1_CEN;
+	GPIOD->ODR |= GPIO_ODR_OD13;
+}
+
+static inline void stopProcess(void)
+{
+	DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+	adc->CR2 &= ~(ADC_CR2_SWSTART|ADC_CR2_ADON);
+	TIM2->CR1 &= ~TIM_CR1_CEN;
+	GPIOD->ODR ^= GPIO_ODR_OD13;
 }
 
 void ADC_IRQHandler(void)
 {
 	//An interrupt can be produced on the end of conversion adc
 	
-	GPIOD->ODR ^= GPIO_ODR_OD12;//GR osc=verde
-	adc->SR &= ~ADC_SR_STRT;
+	GPIOD->ODR ^= GPIO_ODR_OD12;//GR
 	
 	
 }
+
 void DMA2_Stream0_IRQHandler(void)
 {
-	if (DMA2->LISR & DMA_LISR_TCIF0)
+	if(DMA2->LISR & DMA_LISR_TCIF0)
 	{
-		i ++;
-		
-		DMA2->LIFCR &= !DMA_LIFCR_CTCIF0;
+		DMA2->LIFCR |= DMA_LIFCR_CTCIF0;
+		stopProcess();
 	}
-	//Transfer complete dma
-	
-	
-	GPIOD->ODR ^= GPIO_ODR_OD13;//og osc=azul
-	TIM2->CR1 &= ~TIM_CR1_CEN;
-	//TIM2->CR1 |= TIM_CR1_CEN;
 }
