@@ -1,6 +1,6 @@
 #include "stm32f4xx.h"                  // Device header
 
-#define NUM_AMOST				4096
+#define NUM_AMOST 4096
 
 void ADC_IRQHandler(void);
 void DMA2_Stream0_IRQHandler(void);
@@ -12,6 +12,7 @@ ADC_TypeDef *adc = ADC3;
 GPIO_TypeDef *gpio = GPIOA;
 volatile uint32_t data[NUM_AMOST];
 volatile uint32_t size = 0;
+volatile uint32_t overrun = 0;
 
 int main(void)
 {
@@ -47,16 +48,18 @@ int main(void)
 	RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
 	adc->CR2 |= ADC_CR2_ADON; 
 	adc->CR1 |= (0 << ADC_CR1_RES_Pos)| //ADC 12BITS
-							(1 << ADC_CR1_DISCEN_Pos)| //Discontinuous mode on regular channels
-							(1 << ADC_CR1_EOCIE_Pos); // INTERRUPT ABLE
+							(1 << ADC_CR1_DISCEN_Pos);//| //Discontinuous mode on regular channels
+//							(1 << ADC_CR1_OVRIE_Pos)|
+//							(1 << ADC_CR1_EOCIE_Pos); // INTERRUPT ABLE
 	adc->SQR1 |= (0 << ADC_SQR1_L_Pos); //1 CONV
 	adc->SQR3 |= (0 << ADC_SQR3_SQ1_Pos); //CHANEL 0
-	adc->SMPR2 = (0 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME 
+	adc->SMPR2 = (7 << ADC_SMPR2_SMP1_Pos); //SAMMPLING TIME 
 	adc->CR2 |= (1 << ADC_CR2_EXTEN_Pos)| //EXTEN RISING EDGE
 							(3 << ADC_CR2_EXTSEL_Pos)| //EXSEL TIMER CANAL 2 EVENT
-							(1 << ADC_CR2_EOCS_Pos)| // End of conversion selection = the EOC bit is set at the end of each regular conversion
+//							(1 << ADC_CR2_EOCS_Pos)| // End of conversion selection = the EOC bit is set at the end of each regular conversion
 							(1 << ADC_CR2_DMA_Pos);//Direct memory access mode ABLE
-	NVIC_EnableIRQ(ADC_IRQn);
+//	ADC123_COMMON->CCR |= ADC_CCR_TSVREFE;
+//	NVIC_EnableIRQ(ADC_IRQn);
 	
 	//confg pin timmer 
 	#if 1
@@ -97,15 +100,20 @@ static inline void stopProcess(void)
 	GPIOD->ODR ^= GPIO_ODR_OD13;
 }
 
+#if 0
 void ADC_IRQHandler(void)
 {
-	//An interrupt can be produced on the end of conversion adc
-	
-	GPIOD->ODR ^= GPIO_ODR_OD12;//GR
-	
-	
+	if(ADC123_COMMON->CSR & ADC_CSR_EOC3)
+	{
+		GPIOD->ODR ^= GPIO_ODR_OD12;
+	}
+	if(adc->SR & ADC_SR_OVR)
+	{
+		overrun++;
+	}
+	size++;
 }
-
+#endif
 void DMA2_Stream0_IRQHandler(void)
 {
 	if(DMA2->LISR & DMA_LISR_TCIF0)
