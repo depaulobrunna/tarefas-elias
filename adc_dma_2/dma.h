@@ -4,9 +4,7 @@
 #include "stm32f4xx.h"
 #include "stdint.h"
 
-void dmaInit(DMA_Stream_TypeDef *dma,
-						 IRQn_Type *irq,
-						 uint32_t num,
+void dmaInit(uint32_t num,
 						 uint32_t *mem_addr,
 						 uint32_t *per_add);
 void dmaStart(void);

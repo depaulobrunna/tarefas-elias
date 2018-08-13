@@ -5,9 +5,7 @@ static IRQn_Type dma_irq = DMA2_Stream0_IRQn;
 
 void DMA2_Stream0_IRQHandler(void);
 
-void dmaInit(DMA_Stream_TypeDef *dma,
-						 IRQn_Type *irq,
-						 uint32_t num,
+void dmaInit(uint32_t num,
 						 uint32_t *mem_addr,
 						 uint32_t *per_add)
 {
