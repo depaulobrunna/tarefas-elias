@@ -4,7 +4,7 @@
 GPIO_TypeDef *gpio = GPIOA;
 TIM_TypeDef *tim = TIM2;
 
-void timInit(uint32_t *psc, uint32_t *arr, uint32_t *high_time)
+void timInit(uint32_t psc, uint32_t arr, uint32_t high_time)
 {
 	RCC -> AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 	gpio-> MODER |= GPIO_MODER_MODER1_1; 

@@ -4,7 +4,7 @@
 #include "stm32f4xx.h"
 #include "stdint.h"
 
-void adcInit(void);
+void adcInit(uint8_t res);
 void adcStart(void);
 void adcStop(void);
 #endif
